@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .header {
+        @apply bg-[#2F2F2F] text-[#F6F7F9] text-left pl-2
+    }
+
+    .content {
+        @apply border-b-[1px] border-[#DDDDDD]
+    }
+
+    .content:nth-child(2) {
+        @apply bg-[#F3F3F3]
+    }
+}
