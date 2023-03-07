@@ -3,15 +3,19 @@
 @tailwind utilities;
 
 @layer components {
-    .header {
-        @apply bg-[#2F2F2F] text-[#F6F7F9] text-left pl-2
+    .back {
+        @apply left-10 top-32 bg-[#2F2F2F] rounded-md text-white w-[10rem] flex justify-center items-center h-[2rem] hover:brightness-90 active:scale-95 shadow-md
+    }
+
+    #passwordStateButton:hover ~ #passwordPopup {
+        @apply scale-100
     }
 
     .content {
-        @apply border-b-[1px] border-[#DDDDDD]
+        @apply border px-4 py-2
     }
 
-    .content:nth-child(2) {
-        @apply bg-[#F3F3F3]
+    #passwordField::-ms-reveal, #passwordField::-ms-clear {
+        @apply hidden h-0 w-0
     }
 }

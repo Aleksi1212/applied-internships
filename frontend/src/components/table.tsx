@@ -1,11 +1,57 @@
 import { Link } from "react-router-dom"
 
+import { useEffect, useState } from "react"
+
+import checkToken from "../tokenCheck/checkToken"
+
+interface internshipTypes {
+    id: number
+    company: string
+    application_status: string
+    applied_date: string
+    accepted_rejected_date: string
+}
+
 function Table() {
+    const [appliedInternships, setAppliedInternships] = useState<Array<internshipTypes>>([])
+    const [authToken, setAuthToken] = useState<string>('')
+
+    useEffect(() => {
+        let isMounted = true
+
+        async function getData() {
+            const getAllInternships = await fetch('http://localhost:3000/getAll', {
+                method: 'GET'
+            })
+
+            const checkAuthToken = await checkToken(localStorage.getItem('AuthToken') || '')
+
+            const allToJson = await getAllInternships.json()
+
+            if (isMounted) {
+                setAppliedInternships(allToJson)
+            }
+
+            // if (!checkAuthToken.state) {
+            //     setAuthToken('')
+            //     localStorage.setItem('AuthToken', 'none')
+            // } else {
+            //     setAuthToken(checkAuthToken.token)
+            // }
+        }
+
+        getData()
+
+        return () => {
+            isMounted = false
+        }
+    }, [])
+
     return (
         <section className="w-full flex flex-col items-center">
             <h1 className="text-3xl border-b-2 border-[#2F2F2F] absolute top-10">Applied Internships</h1>
-            <Link to="/addCompany" className="left-10 top-32 fixed bg-[#2F2F2F] rounded-md text-white w-[10rem] flex justify-center items-center h-[2rem] hover:brightness-90 active:scale-95">
-                Add New Internship
+            <Link to={authToken.length <= 0 ? '/logIn' : '/addCompany'} className="back fixed">
+                {authToken.length <= 0 ? 'Log In' : 'Add New Company'}
             </Link>
 
             <table className="table-auto w-[60rem] mt-32 shadow-md rounded-tr-md rounded-tl-md bg-[#2F2F2F]">
@@ -20,21 +66,19 @@ function Table() {
                 </thead>
 
                 <tbody>
-                    <tr className="bg-white">
-                        <td className="border px-4 py-2">Data 1</td>
-                        <td className="border px-4 py-2">Data 2</td>
-                        <td className="border px-4 py-2">Data 3</td>
-                        <td className="border px-4 py-2">Data 4</td>
-                        <td className="border px-4 py-2">test</td>
-                    </tr>
-
-                    <tr className="bg-white">
-                        <td className="border px-4 py-2">Data 1</td>
-                        <td className="border px-4 py-2">Data 2</td>
-                        <td className="border px-4 py-2">Data 3</td>
-                        <td className="border px-4 py-2">Data 4</td>
-                        <td className="border px-4 py-2">test</td>
-                    </tr>
+                    {
+                        appliedInternships.map((appliedInternship: internshipTypes) => {
+                            return (
+                                <tr key={appliedInternship.id} style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }}>
+                                    <td className="content">{appliedInternship.id}</td>
+                                    <td className="content">{appliedInternship.company}</td>
+                                    <td className="content">{appliedInternship.application_status}</td>
+                                    <td className="content">{appliedInternship.applied_date}</td>
+                                    <td className="content">{appliedInternship.accepted_rejected_date}</td>
+                                </tr>
+                            )
+                        })
+                    }
                 </tbody>
             </table>
         </section>

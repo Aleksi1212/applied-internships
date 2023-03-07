@@ -1,9 +1,13 @@
+import dotenv from 'dotenv'
+
+dotenv.config()
+
 const connection = {
-    host: 'internship-database.ce68iv8asrox.eu-north-1.rds.amazonaws.com',
-    user: 'admin',
-    password: 'Jo9mKWxd1',
+    host: process.env.MARIA_DB_HOST,
+    user: process.env.MARIA_DB_USER,
+    password: process.env.MARIA_DB_PASSWORD,
     port: 3306,
-    database: 'applied_internships'
+    database: process.env.MARIA_DB_DATABASE
 }
 
 export default connection
