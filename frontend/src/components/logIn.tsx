@@ -7,6 +7,10 @@ import hidePasswordIcon from '../images/hidePassword.png'
 
 function LogIn() {
     const [passwordState, setPasswordState] = useState<boolean>(true)
+    const [userName, setUserName] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+
+    const [alert, setAlert] = useState<string>('allowed')
 
     async function logIn(event: any) {
         event.preventDefault()
@@ -24,7 +28,14 @@ function LogIn() {
 
         const getAuthToken = await logInAdmin.json()
 
-        localStorage.setItem('AuthToken', getAuthToken)
+        if (getAuthToken.type === 'success') {
+            localStorage.setItem('AuthToken', getAuthToken.token)
+        } else {
+            setAlert('invalid username or password')
+        }
+
+        setUserName('')
+        setPassword('')
     }
 
     return (
@@ -36,10 +47,10 @@ function LogIn() {
 
             <div className="w-[25rem] h-[12rem] bg-white rounded-lg shadow-md mt-32 flex justify-center">
                 <form onSubmit={logIn} className="flex flex-col justify-evenly w-[60%]">
-                    <input type="text" className="outline-none pl-2 border-b-2 border-[#2F2F2F]" placeholder="Admin Name" name="adminName" required />
+                    <input value={userName} onChange={(event: any) => setUserName(event.target.value)} type="text" className="outline-none pl-2 border-b-2 border-[#2F2F2F]" placeholder="Admin Name" name="adminName" required />
 
                     <div className="w-full flex justify-between relative">
-                        <input type={passwordState ? 'password' : 'text'} className="outline-none pl-2 border-b-2 w-full border-[#2F2F2F]" id="passwordField" placeholder="Admin Password" name="adminPassword" required />
+                        <input value={password} onChange={(event: any) => setPassword(event.target.value)} type={passwordState ? 'password' : 'text'} className="outline-none pl-2 border-b-2 w-full border-[#2F2F2F]" id="passwordField" placeholder="Admin Password" name="adminPassword" required />
 
                         <button className="absolute right-2" onClick={() => setPasswordState(!passwordState)} type="button" id="passwordStateButton">
                             <img src={passwordState ? showPasswordIcon : hidePasswordIcon} alt="passwordIcon" width={22} />

@@ -18,4 +18,8 @@
     #passwordField::-ms-reveal, #passwordField::-ms-clear {
         @apply hidden h-0 w-0
     }
+
+    .alertLink {
+        @apply  w-[5.5rem] h-[1.5rem] flex justify-center items-center rounded-md hover:bg-[#9C9C9C]
+    }
 }

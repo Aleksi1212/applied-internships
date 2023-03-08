@@ -14,8 +14,8 @@ interface internshipTypes {
 
 function Table() {
     const [appliedInternships, setAppliedInternships] = useState<Array<internshipTypes>>([])
-    const [authToken, setAuthToken] = useState<string>('')
-
+    const [authenticated, setAuthenticated] = useState<boolean>(false)
+    
     useEffect(() => {
         let isMounted = true
 
@@ -25,19 +25,18 @@ function Table() {
             })
 
             const checkAuthToken = await checkToken(localStorage.getItem('AuthToken') || '')
-
-            const allToJson = await getAllInternships.json()
+            const allInternShips = await getAllInternships.json()
 
             if (isMounted) {
-                setAppliedInternships(allToJson)
+                setAppliedInternships(allInternShips)
             }
 
-            // if (!checkAuthToken.state) {
-            //     setAuthToken('')
-            //     localStorage.setItem('AuthToken', 'none')
-            // } else {
-            //     setAuthToken(checkAuthToken.token)
-            // }
+            if (checkAuthToken.type === 'error') {
+                localStorage.setItem('AuthToken', '')
+                setAuthenticated(false)
+            } else {
+                setAuthenticated(true)
+            }
         }
 
         getData()
@@ -50,8 +49,8 @@ function Table() {
     return (
         <section className="w-full flex flex-col items-center">
             <h1 className="text-3xl border-b-2 border-[#2F2F2F] absolute top-10">Applied Internships</h1>
-            <Link to={authToken.length <= 0 ? '/logIn' : '/addCompany'} className="back fixed">
-                {authToken.length <= 0 ? 'Log In' : 'Add New Company'}
+            <Link to={authenticated ? '/addCompany' : '/logIn'} className="back fixed">
+                {authenticated ? 'Add New Company' : 'Log In'}
             </Link>
 
             <table className="table-auto w-[60rem] mt-32 shadow-md rounded-tr-md rounded-tl-md bg-[#2F2F2F]">

@@ -7,7 +7,8 @@ const connectToDb = await mariadb.createConnection(connection)
 
 async function getAdmin(name, password) {
     try {
-        const getAdminData = await connectToDb.query(`SELECT * FROM admin_user WHERE username = '${name}' AND userPassword = '${password}'`)
+        const query = 'SELECT * FROM admin_user WHERE username = ? AND userPassword = ?'
+        const getAdminData = await connectToDb.query(query, [name, password])
 
         if (getAdminData.length <= 0) {
             return { message: 'No data', data: [], type: 'error' }
@@ -20,22 +21,11 @@ async function getAdmin(name, password) {
     }
 }
 
-async function invalidateAuthToken(token) {
-    try {
-        const invalidateToken = await Promise.allSettled([
-            connectToDb.query(`INSERT INTO invalid_tokens VALUES('${token}')`)
-        ])
-
-        return invalidateToken[0].status === 'fulfilled' ? 'success' : 'error'
-    } catch(err) {
-        return 'error'
-    }
-}
-
 async function getAll(orderByValue, orderBy) {
     try {
         if (orderBy) {
             const getAll_Internships_InOrder = await connectToDb.query(`SELECT * FROM applied_internships ORDER BY ${orderByValue}`)
+
             return getAll_Internships_InOrder
         }
 
@@ -47,17 +37,19 @@ async function getAll(orderByValue, orderBy) {
     }
 }
 
-async function addNewInternship(companyName) {
+async function addNewInternship(companyName, applied_date, authenticated) {
     try {
-        const currentDate = new Date()
+        if (!authenticated) {
+            return { message: 'Unauthorized', type: 'error' }
+        }
+        
+        const query = `
+            INSERT INTO applied_internships (company, application_status, applied_date, accepted_rejected_date)
+            VALUES(?, ?, ?, ?)
+        `
 
         const addNewInternshipPromise = await Promise.allSettled([
-            connectToDb.query(`
-                INSERT INTO applied_internships (company, application_status, applied_date, accepted_rejected_date)
-                VALUES(
-                    '${companyName}', 'pending', '${currentDate.toLocaleDateString('en-US')}', '-'
-                )
-            `)
+            connectToDb.query(query, [companyName, 'pending', applied_date, '-'])
         ])
 
         return addNewInternshipPromise[0].status === 'fulfilled' ? {
@@ -94,7 +86,6 @@ async function updateInternship(id, newStatus, accepted_rejected_date) {
 
 export {
     getAdmin,
-    invalidateAuthToken,
     getAll,
     addNewInternship,
     updateInternship

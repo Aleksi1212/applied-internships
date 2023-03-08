@@ -9,6 +9,8 @@ async function checkToken(token: string) {
 
         const tokenState = await checkAuthToken.json()
 
+        return tokenState
+
     } catch(err) {
         return { token: 'error', state: false }
     }
