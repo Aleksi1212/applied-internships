@@ -21,19 +21,15 @@ async function getAdmin(name, password) {
     }
 }
 
-async function getAll(orderByValue, orderBy) {
+async function getAll(orderByValue, direction) {
     try {
-        if (orderBy) {
-            const getAll_Internships_InOrder = await connectToDb.query(`SELECT * FROM applied_internships ORDER BY ${orderByValue}`)
+        const query = `SELECT * FROM applied_internships ORDER BY ${orderByValue} ${direction}`
+        const getAll_Internships = await connectToDb.query(query)
 
-            return getAll_Internships_InOrder
-        }
-
-        const getAll_Internships = await connectToDb.query('SELECT * FROM applied_internships')
         return getAll_Internships
 
     } catch(err) {
-        return 'error'
+        return [{ id: 'error', company: 'error', application_status: 'error', applied_date: 'error', accepted_rejected_date: 'error' }]
     }
 }
 
@@ -74,7 +70,7 @@ async function updateInternship(id, newStatus, accepted_rejected_date) {
         ])
 
         return updateInternshipPromise[0].status === 'fulfilled' ? {
-            message: 'Updated Succesfully', type: 'success'
+            message: 'Status Updated Succesfully', type: 'success'
         }: {
             message: updateInternshipPromise[0].reason.message, type: updateInternshipPromise[0].reason.constructor.name
         }

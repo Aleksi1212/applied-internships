@@ -30,15 +30,15 @@ app
         res.json({ message: 'server running' })
     })
 
-    .get('/getAll', async (req, res) => {
-        const getAll_Internships = await getAll('company', true)
-        res.json(getAll_Internships)
+    .get('/getAll/:orderBy', async (req, res) => {
+        try {
+            const values = req.params.orderBy.split('=')
+            const getAll_Internships = await getAll(values[0], values[1])
 
-    })
-
-    .get('/inOrder/:orderBy', async (req, res) => {
-        const getAll_Internships_InOrder = await getAll(req.params.orderBy, true)
-        res.json(getAll_Internships_InOrder)
+            res.status(200).json(getAll_Internships)
+        } catch(err) {
+            res.status(400).json([{ id: 0, company: 'error', application_status: 'error', applied_date: 'error', accepted_rejected_date: 'error' }])
+        }
     })
 
     .post('/logIn', async (req, res) => {
@@ -60,7 +60,7 @@ app
 
     .post('/postNew', authenticateToken, async (req, res) => {
         try {
-            const { companyName, appliedDate } = req.body
+            const { companyName, appliedDate } = req.body || {}
             const addInternship = await addNewInternship(companyName, appliedDate, req.user.type === 'error' ? false : true)
 
             res.status(200).json(addInternship)
@@ -70,8 +70,16 @@ app
         }
     })
 
-    .put('/update', authenticateToken, (req, res) => {
+    .put('/update', authenticateToken, async (req, res) => {
+        try {
+            const { companyId, companyStatus, accepted_rejected_date } = req.body || {}
+            const editInternsipStatus = await updateInternship(companyId, companyStatus, accepted_rejected_date)
 
+            res.status(200).json(editInternsipStatus)
+
+        } catch(err) {
+            res.status(400).json({ message: 'Bad request', type: 'error' })
+        }
     })
 
     .listen(3000, () => {

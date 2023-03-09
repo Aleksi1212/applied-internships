@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import error from '../images/error.png'
 import success from '../images/success.png'
 
+import AlertBox from "./alertBox"
+
 interface alertType {
     message: string
     image: string
@@ -13,12 +15,19 @@ interface alertType {
 
 function AddInternship() {
     const [authToken, setAuthToken] = useState<string>('')
-    const [alert, setAlert] = useState<alertType>({ message: 'success', image: success, bottom: '-5rem' })
+    const [alert, setAlert] = useState<alertType>({ message: 'message', image: success, bottom: '-5rem' })
 
     useEffect(() => {
         const token = localStorage.getItem('AuthToken') || ''
         setAuthToken(token)
-    }, [])
+
+        if (alert.bottom !== '-5rem') {
+            setTimeout(() => {
+                setAlert({ ...alert, bottom: '-5rem' })
+            }, 2000);
+        }
+    }, [alert])
+
 
     async function addCompany(event: any) {
         event.preventDefault()
@@ -26,7 +35,7 @@ function AddInternship() {
         const company = event.target.companyName.value
         const appliedDate = new Date(event.target.date.value).toLocaleDateString('en-GB')
 
-        const testPost = await fetch('http://localhost:3000/postNew', {
+        const postNew = await fetch('http://localhost:3000/postNew', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authToken}`,
@@ -35,50 +44,45 @@ function AddInternship() {
             body: JSON.stringify({ companyName: company, appliedDate: appliedDate })
         })
 
-        const testResult = await testPost.json()
-        console.log(testResult)
+        const postNewResult = await postNew.json()
+        
+        if (postNewResult.type === 'success') {
+            setAlert({ message: postNewResult.message, image: success, bottom: '2.5rem' })
+        } else {
+            setAlert({ message: postNewResult.message, image: error, bottom: '2.5rem' })
+        }
+
+        event.target.reset()
     }
+
 
     if (authToken.length <= 0) {
         return <h1>Unauthorized</h1>
     }
 
     return (
-        <section className="w-full h-[100vh] flex flex-col items-center bg-[#F6F7F9] overflow-hidden">
+        <section className="w-full h-[100svh] flex flex-col relative items-center bg-[#F6F7F9] overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Add New Internship</h1>
             <Link to="/" className="back absolute">
                 Back To Table
             </Link>
-
+            <AlertBox alert={{
+                message: alert.message,
+                image: alert.image,
+                bottom: alert.bottom,
+                buttons: true,
+                buttonText: 'Add New'
+            }} />
 
             <div className="w-[25rem] h-[12rem] bg-white rounded-lg shadow-md flex justify-center items-center mt-32">
                 <form className="flex flex-col h-full w-[60%] justify-evenly" onSubmit={addCompany}>
-                    <input type="text" placeholder="Company Name" name="companyName" className="pl-2 border-b-2 border-[#2F2F2F] outline-none" />
-                    <input type="date" placeholder="Applied Date" name="date" className="pl-2 border-b-2 border-[#2F2F2F] outline-none" />
+                    <input type="text" placeholder="Company Name" name="companyName" className="pl-2 border-b-2 border-[#2F2F2F] outline-none" required />
+                    <input type="date" placeholder="Applied Date" name="date" className="pl-2 border-b-2 border-[#2F2F2F] outline-none" required />
 
-                    <button type="submit" className="rounded-md bg-[#2F2F2F] text-white h-[1.5rem] text-sm">Add Company</button>
+                    <button type="submit" className="formButton">Add Company</button>
                 </form>
             </div>
 
-            <div className="bg-[#2F2F2F] w-[17.5rem] h-[4rem] transition-all duration-200 rounded-md flex flex-col justify-evenly items-center" >
-                <div className="w-full flex text-white gap-x-2 px-2">
-                    <img src={alert.image} />
-                    <p>|</p>
-                    <h1>{alert.message}</h1>
-                </div>
-
-                <hr className="w-[90%]" />
-
-                <div className="w-full flex justify-center items-center text-xs text-white">
-                    <button className="alertLink">Add New</button>
-
-                    <div className="h-[90%] w-[1px] bg-white"></div>
-                    <Link to="/" className="alertLink">Back To Table</Link>
-                    <div className="h-[90%] w-[1px] bg-white"></div>
-
-                    <button className="alertLink">Close</button>
-                </div>
-            </div>
         </section>
     )
 }

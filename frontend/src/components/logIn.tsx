@@ -1,16 +1,37 @@
 import { Link } from "react-router-dom"
 
-import { useState, FormEvent, SyntheticEvent, useEffect } from "react"
+import { useState, useEffect } from "react"
 
 import showPasswordIcon from '../images/showPassword.png'
 import hidePasswordIcon from '../images/hidePassword.png'
+import error from '../images/error.png'
+import success from '../images/success.png'
+
+import AlertBox from "./alertBox"
+
+interface alertTypes {
+    message: string
+    image: string
+    bottom: string
+}
 
 function LogIn() {
     const [passwordState, setPasswordState] = useState<boolean>(true)
-    const [userName, setUserName] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
+    const [alert, setAlert] = useState<alertTypes>({ message: 'message', image: success, bottom: '-5rem' })
+    
+    const [authToken, setAuthToken] = useState<string>('')
 
-    const [alert, setAlert] = useState<string>('allowed')
+    useEffect(() => {
+        const token = localStorage.getItem('AuthToken') || ''
+        setAuthToken(token)
+
+        if (alert.bottom != '-5rem') {
+            setTimeout(() => {
+                setAlert({ ...alert, bottom: '-5rem' })
+            }, 2000);
+        }
+    }, [alert])
+
 
     async function logIn(event: any) {
         event.preventDefault()
@@ -30,27 +51,40 @@ function LogIn() {
 
         if (getAuthToken.type === 'success') {
             localStorage.setItem('AuthToken', getAuthToken.token)
+            setAlert({ message: 'Succesfully Logged In', image: success, bottom: '2.5rem' })
         } else {
-            setAlert('invalid username or password')
+            setAlert({ message: 'Invalid Username Or Password', image: error, bottom: '2.5rem' })
         }
 
-        setUserName('')
-        setPassword('')
+        event.target.reset()
+    }
+
+
+    if (authToken.length > 0 && alert.message === 'message') {
+        return <h1>Already Logged In</h1>
     }
 
     return (
-        <section className="w-full h-[100vh] flex flex-col items-center">
+        <section className="w-full h-[100svh] flex flex-col items-center relative overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Log In</h1>
             <Link to="/" className="back absolute">
                 Back To Table
             </Link>
 
+            <AlertBox alert={{
+                message: alert.message,
+                image: alert.image,
+                bottom: alert.bottom,
+                buttons: false,
+                buttonText: ''
+            }} />
+
             <div className="w-[25rem] h-[12rem] bg-white rounded-lg shadow-md mt-32 flex justify-center">
                 <form onSubmit={logIn} className="flex flex-col justify-evenly w-[60%]">
-                    <input value={userName} onChange={(event: any) => setUserName(event.target.value)} type="text" className="outline-none pl-2 border-b-2 border-[#2F2F2F]" placeholder="Admin Name" name="adminName" required />
+                    <input type="text" className="outline-none pl-2 border-b-2 border-[#2F2F2F]" placeholder="Admin Name" name="adminName" required />
 
                     <div className="w-full flex justify-between relative">
-                        <input value={password} onChange={(event: any) => setPassword(event.target.value)} type={passwordState ? 'password' : 'text'} className="outline-none pl-2 border-b-2 w-full border-[#2F2F2F]" id="passwordField" placeholder="Admin Password" name="adminPassword" required />
+                        <input type={passwordState ? 'password' : 'text'} className="outline-none pl-2 border-b-2 w-full border-[#2F2F2F]" id="passwordField" placeholder="Admin Password" name="adminPassword" required />
 
                         <button className="absolute right-2" onClick={() => setPasswordState(!passwordState)} type="button" id="passwordStateButton">
                             <img src={passwordState ? showPasswordIcon : hidePasswordIcon} alt="passwordIcon" width={22} />
@@ -61,7 +95,7 @@ function LogIn() {
                         </div>
                     </div>
 
-                    <button className="bg-[#2F2F2F] rounded-md text-white text-sm h-[1.5rem]" type="submit">Log In</button>
+                    <button className="formButton" type="submit">Log In</button>
                 </form>
             </div>
         </section>

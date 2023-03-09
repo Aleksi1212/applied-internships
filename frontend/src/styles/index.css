@@ -19,7 +19,31 @@
         @apply hidden h-0 w-0
     }
 
+    .inputField {
+        @apply pl-2 border-b-2 border-[#2F2F2F] outline-none
+    }
+
+    .formButton {
+        @apply rounded-md bg-[#2F2F2F] text-white h-[1.5rem] text-sm
+    }
+
     .alertLink {
-        @apply  w-[5.5rem] h-[1.5rem] flex justify-center items-center rounded-md hover:bg-[#9C9C9C]
+        @apply w-[5.5rem] h-[1.5rem] flex justify-center items-center rounded-md hover:bg-[#9C9C9C]
+    }
+
+    .menuBar {
+        @apply w-[2.25rem] h-1 bg-[#2F2F2F] rounded-lg transition-all duration-300
+    }
+
+    .menuButtonContainer {
+        @apply w-[75%] h-[3rem] relative
+    }
+
+    .menuButton {
+        @apply w-full h-full rounded-lg hover:bg-[#d8d9d8] flex justify-center items-center
+    }
+
+    .headerButton {
+        @apply w-full h-[3rem] flex justify-center items-center gap-x-4
     }
 }
