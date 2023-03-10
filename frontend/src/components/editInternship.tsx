@@ -28,7 +28,7 @@ function EditInternsip() {
 
         const companyId = event.target.id.value
         const companyStatus = event.target.status.value
-        const accepted_rejected_date = new Date(event.target.date.value).toLocaleDateString('en-GB')
+        const accepted_rejected_date = event.target.date.value
 
         const editCompanyStatus = await fetch('http://localhost:3000/update', {
             method: 'PUT',
@@ -52,7 +52,16 @@ function EditInternsip() {
     
 
     if (authToken.length <= 0) {
-        return <h1>Unauthorized</h1>
+        return (
+            <section className="w-full h-[100svh] flex relative justify-center bg-[#F6F7F9]">
+                <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Unauthorized</h1>
+
+                <div className="absolute flex flex-col text-white gap-y-2 top-32">
+                    <Link to="/logIn" className="statusScreenButton">Log In</Link>
+                    <Link to="/" className="statusScreenButton">Back To Table</Link>
+                </div>
+            </section>
+        )
     }
 
     return (

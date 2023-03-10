@@ -1,30 +1,15 @@
 'use strict';
 
-import connection from "./config.mjs";
+import connection from "../config.mjs";
 import mariadb from 'mariadb'
 
-const connectToDb = await mariadb.createConnection(connection)
+const CONNECT_TO_DB = await mariadb.createConnection(connection)
 
-async function getAdmin(name, password) {
-    try {
-        const query = 'SELECT * FROM admin_user WHERE username = ? AND userPassword = ?'
-        const getAdminData = await connectToDb.query(query, [name, password])
-
-        if (getAdminData.length <= 0) {
-            return { message: 'No data', data: [], type: 'error' }
-        }
-
-        return { message: 'Success', data: getAdminData, type: 'success' }
-
-    } catch(err) {
-        return { message: 'Error', data: [], type: 'error' }
-    }
-}
 
 async function getAll(orderByValue, direction) {
     try {
         const query = `SELECT * FROM applied_internships ORDER BY ${orderByValue} ${direction}`
-        const getAll_Internships = await connectToDb.query(query)
+        const getAll_Internships = await CONNECT_TO_DB.query(query)
 
         return getAll_Internships
 
@@ -45,7 +30,7 @@ async function addNewInternship(companyName, applied_date, authenticated) {
         `
 
         const addNewInternshipPromise = await Promise.allSettled([
-            connectToDb.query(query, [companyName, 'pending', applied_date, '-'])
+            CONNECT_TO_DB.query(query, [companyName, 'pending', applied_date, '-'])
         ])
 
         return addNewInternshipPromise[0].status === 'fulfilled' ? {
@@ -62,7 +47,7 @@ async function addNewInternship(companyName, applied_date, authenticated) {
 async function updateInternship(id, newStatus, accepted_rejected_date) {
     try {
         const updateInternshipPromise = await Promise.allSettled([
-            connectToDb.query(`
+            CONNECT_TO_DB.query(`
                 UPDATE applied_internships
                 SET application_status = '${newStatus}', accepted_rejected_date = '${accepted_rejected_date}'
                 WHERE id = ${id}
@@ -81,7 +66,6 @@ async function updateInternship(id, newStatus, accepted_rejected_date) {
 }
 
 export {
-    getAdmin,
     getAll,
     addNewInternship,
     updateInternship

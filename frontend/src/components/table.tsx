@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 
-import checkToken from "../tokenCheck/checkToken"
+import { checkToken } from "../authentication/checkToken"
 import getInternships from "../data/getInternships"
 
 import dash from '../images/dash.png'
@@ -134,8 +134,8 @@ function Table() {
                                     <td className="content">{appliedInternship.id}</td>
                                     <td className="content">{appliedInternship.company}</td>
                                     <td className="content">{appliedInternship.application_status}</td>
-                                    <td className="content">{appliedInternship.applied_date}</td>
-                                    <td className="content">{appliedInternship.accepted_rejected_date}</td>
+                                    <td className="content">{new Date(appliedInternship.applied_date).toLocaleDateString('en-GB')}</td>
+                                    <td className="content">{appliedInternship.accepted_rejected_date !== null ? new Date(appliedInternship.accepted_rejected_date).toLocaleDateString('en-GB') : '-'}</td>
                                 </tr>
                             )
                         })

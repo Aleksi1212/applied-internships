@@ -61,7 +61,17 @@ function LogIn() {
 
 
     if (authToken.length > 0 && alert.message === 'message') {
-        return <h1>Already Logged In</h1>
+        return (
+            <section className="w-full h-[100svh] flex relative justify-center bg-[#F6F7F9]">
+                <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Already Logged In</h1>
+
+                <div className="absolute flex flex-col text-white gap-y-2 top-32">
+                    <Link to="/" className="statusScreenButton">Back To Table</Link>
+                    <Link to="/addCompany" className="statusScreenButton">Add New Company</Link>
+                    <Link to="/editStatus" className="statusScreenButton">Edit Company Status</Link>
+                </div>
+            </section>
+        )
     }
 
     return (

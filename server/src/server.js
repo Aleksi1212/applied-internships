@@ -5,7 +5,8 @@ import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
-import { getAdmin, getAll, addNewInternship, updateInternship } from './datalayer/querys.mjs'
+import { getAdmin, setAuthToken } from './datalayer/querys/authentication.mjs';
+import { getAll, addNewInternship, updateInternship } from './datalayer/querys/internshipQuerys.mjs';
 import authenticateToken from './middleware.mjs';
 
 const app = express()
@@ -14,7 +15,7 @@ dotenv.config()
 const whitelist = ['http://localhost:5173']
 const corsOptions = {
     origin: (origin, callback) => {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
+        if (whitelist.indexOf(origin) !== 1 || !origin) {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by cors'))
@@ -47,10 +48,33 @@ app
     
             const adminLogIn = await getAdmin(adminName, adminPassword)
             const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' })
-            res.status(200).json({ token: accessToken, type: 'success' })
+            const set_AuthToken = await setAuthToken(accessToken)
+
+            res.status(200).json({ token: accessToken, ...set_AuthToken })
             
         } catch(err) {
-            res.status(401).json({ token: 'none', type: 'error' })
+            res.status(401).json({token: 'none', message: err.message, type: 'error' })
+        }
+    })
+
+    // .post('/logOut', (req, res) => {
+    //     try {
+    //         const { token } = req.body
+
+    //         const decodeToken = jwt.decode(token)
+    //         const logOutUser = jwt.sign({ username: decodeToken.username, password: decodeToken.password }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' })
+    //         res.json(logOutUser)
+    //     } catch(err) {
+    //         res.json('error')
+    //     }
+    // })
+
+    .get('/getToken', async (req, res) => {
+        try {
+
+
+        } catch(err) {
+            res.status(401).json({ token: 'unatuhorized', type: 'error' })
         }
     })
 

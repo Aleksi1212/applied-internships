@@ -46,4 +46,8 @@
     .headerButton {
         @apply w-full h-[3rem] flex justify-center items-center gap-x-4
     }
+
+    .statusScreenButton {
+        @apply w-[12rem] h-[2rem] bg-[#2F2F2F] rounded-md flex justify-center items-center hover:brightness-90 active:scale-95
+    }
 }

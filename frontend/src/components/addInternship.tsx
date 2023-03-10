@@ -33,7 +33,7 @@ function AddInternship() {
         event.preventDefault()
 
         const company = event.target.companyName.value
-        const appliedDate = new Date(event.target.date.value).toLocaleDateString('en-GB')
+        const appliedDate = event.target.date.value
 
         const postNew = await fetch('http://localhost:3000/postNew', {
             method: 'POST',
@@ -57,7 +57,16 @@ function AddInternship() {
 
 
     if (authToken.length <= 0) {
-        return <h1>Unauthorized</h1>
+        return (
+            <section className="w-full h-[100svh] flex relative justify-center bg-[#F6F7F9]">
+                <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Unauthorized</h1>
+
+                <div className="absolute flex flex-col text-white gap-y-2 top-32">
+                    <Link to="/logIn" className="statusScreenButton">Log In</Link>
+                    <Link to="/" className="statusScreenButton">Back To Table</Link>
+                </div>
+            </section>
+        )
     }
 
     return (

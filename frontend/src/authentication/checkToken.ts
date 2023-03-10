@@ -16,4 +16,6 @@ async function checkToken(token: string) {
     }
 }
 
-export default checkToken
+export {
+    checkToken
+}
