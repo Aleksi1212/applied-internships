@@ -4,18 +4,14 @@ import express from 'express'
 import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import translate from 'translate'
 
-import { getAdmin, setAuthToken } from './datalayer/querys/authentication.mjs';
+import { getAdmin, invalidateToken, checkTokenValidity } from './datalayer/querys/authentication.mjs';
 import { getAll, addNewInternship, updateInternship } from './datalayer/querys/internshipQuerys.mjs';
 
 import authenticateToken from './middleware.mjs';
 
 const app = express()
 dotenv.config()
-
-translate.engine = 'deepl'
-translate.key = process.env.DEEPL_API_KEY
 
 const whitelist = ['http://localhost:5173']
 const corsOptions = {
@@ -47,44 +43,28 @@ app
         }
     })
 
-    .put('/translate', async (req, res) => {
-        const translateTo = await translate(req.body.text, { from: req.body.from, to: req.body.to })
-        res.status(200).json({ text: translateTo })
-    })
 
     .post('/logIn', async (req, res) => {
         try {
-            const { adminName, adminPassword } = req.body
+            const { adminName, adminPassword } = req.body || {}
     
             const adminLogIn = await getAdmin(adminName, adminPassword)
             const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20m' })
-            const set_AuthToken = await setAuthToken(accessToken)
 
-            res.status(200).json({ token: accessToken, ...set_AuthToken })
+            res.status(200).json({ token: accessToken, type: 'success' })
             
         } catch(err) {
-            res.status(401).json({token: 'none', message: err.message, type: 'error' })
+            res.status(401).json({token: 'error', type: 'error' })
         }
     })
 
-    // .post('/logOut', (req, res) => {
-    //     try {
-    //         const { token } = req.body
-
-    //         const decodeToken = jwt.decode(token)
-    //         const logOutUser = jwt.sign({ username: decodeToken.username, password: decodeToken.password }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' })
-    //         res.json(logOutUser)
-    //     } catch(err) {
-    //         res.json('error')
-    //     }
-    // })
-
-    .get('/getToken', async (req, res) => {
+    .post('/logOut', async (req, res) => {
         try {
-
+            const invalidate_token = await invalidateToken(req.body.token)
+            res.status(200).json(invalidate_token)
 
         } catch(err) {
-            res.status(401).json({ token: 'unatuhorized', type: 'error' })
+            res.status(400).json({ message: 'bad request', type: 'error' })
         }
     })
 
@@ -92,10 +72,16 @@ app
         res.json(req.user)
     })
 
+
     .post('/postNew', authenticateToken, async (req, res) => {
         try {
             const { companyName, appliedDate } = req.body || {}
-            const addInternship = await addNewInternship(companyName, appliedDate, req.user.type === 'error' ? false : true)
+            const checkToken = await checkTokenValidity(req.user.token)
+
+            const addInternship = await addNewInternship(
+                companyName, appliedDate,
+                req.user.type === 'error' || !checkToken.tokenValid ? false : true
+            )
 
             res.status(200).json(addInternship)
 
@@ -107,7 +93,12 @@ app
     .put('/update', authenticateToken, async (req, res) => {
         try {
             const { companyId, companyStatus, accepted_rejected_date } = req.body || {}
-            const editInternsipStatus = await updateInternship(companyId, companyStatus, accepted_rejected_date)
+            const checkToken = await checkTokenValidity(req.user.token)
+            
+            const editInternsipStatus = await updateInternship(
+                companyId, companyStatus, accepted_rejected_date,
+                req.user.type === 'error' || !checkToken.tokenValid ? false : true
+            )
 
             res.status(200).json(editInternsipStatus)
 

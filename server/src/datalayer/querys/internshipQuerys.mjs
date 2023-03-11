@@ -57,8 +57,12 @@ async function addNewInternship(companyName, applied_date, authenticated) {
     }
 }
 
-async function updateInternship(id, newStatus, accepted_rejected_date) {
+async function updateInternship(id, newStatus, accepted_rejected_date, authenticated) {
     try {
+        if (!authenticated) {
+            return { message: 'Unauthorized', type: 'error' }
+        }
+
         const updateInternshipPromise = await Promise.allSettled([
             CONNECT_TO_DB.query(`
                 UPDATE applied_internships

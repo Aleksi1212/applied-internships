@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 
-import { checkToken } from "../authentication/checkToken"
+import checkToken  from "../authentication/validateAuthToken"
+import logOut from "../authentication/logOut"
 import getInternships from "../data/getInternships"
 
 import dash from '../images/dash.png'
@@ -71,6 +72,7 @@ function Table() {
                 localStorage.setItem('AuthToken', '')
                 setAuthenticated(false)
             } else {
+                console.log(checkAuthToken)
                 setAuthenticated(true)
             }
         }
@@ -92,7 +94,18 @@ function Table() {
                     {
                         authenticated ? (
                             <div className="menuButtonContainer">
-                                <button className="menuButton">Log out</button>
+                                <button className="menuButton" onClick={async () => {
+
+                                    const logOut_and_invalidateToken = await logOut(localStorage.getItem('AuthToken') || '')
+
+                                    if (logOut_and_invalidateToken.type === 'success') {
+                                        localStorage.setItem('AuthToken', '')
+                                        setAuthenticated(false)
+                                    } else {
+                                        console.log(logOut_and_invalidateToken)
+                                    }
+
+                                }}>Log out</button>
                             </div>
                         ) : (
                             <div className="menuButtonContainer">
@@ -124,16 +137,6 @@ function Table() {
                 show: companyBox.show,
                 action: setCompanyBox
             }} />
-
-            {/* <div className="w-[25rem] h-[20rem] bg-white fixed right-10 top-36 rounded-md shadow-lg p-6 flex flex-col justify-between">
-                <div className="w-full max-h-[90%] overflow-auto bg-red-500" style={{ overflowWrap: 'break-word' }}>
-                    hello how are you im am good how about you i dont know i like to play video games
-                </div>
-
-                <div className="w-full ">
-                    <h1>test</h1>
-                </div>
-            </div> */}
 
             <table className="table-auto w-[60rem] mt-32 shadow-md rounded-tr-md rounded-tl-md bg-[#2F2F2F]">
                 <thead>
