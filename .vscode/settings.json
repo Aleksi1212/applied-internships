@@ -34,7 +34,7 @@
             "server": "internship-database.ce68iv8asrox.eu-north-1.rds.amazonaws.com",
             "port": 3306,
             "driver": "MariaDB",
-            "name": "awsconnection",
+            "name": "testconnection",
             "database": "applied_internships",
             "username": "admin",
             "password": "Jo9mKWxd1"

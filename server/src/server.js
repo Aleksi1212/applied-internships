@@ -4,13 +4,18 @@ import express from 'express'
 import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import translate from 'translate'
 
 import { getAdmin, setAuthToken } from './datalayer/querys/authentication.mjs';
 import { getAll, addNewInternship, updateInternship } from './datalayer/querys/internshipQuerys.mjs';
+
 import authenticateToken from './middleware.mjs';
 
 const app = express()
 dotenv.config()
+
+translate.engine = 'deepl'
+translate.key = process.env.DEEPL_API_KEY
 
 const whitelist = ['http://localhost:5173']
 const corsOptions = {
@@ -42,12 +47,17 @@ app
         }
     })
 
+    .put('/translate', async (req, res) => {
+        const translateTo = await translate(req.body.text, { from: req.body.from, to: req.body.to })
+        res.status(200).json({ text: translateTo })
+    })
+
     .post('/logIn', async (req, res) => {
         try {
             const { adminName, adminPassword } = req.body
     
             const adminLogIn = await getAdmin(adminName, adminPassword)
-            const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' })
+            const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20m' })
             const set_AuthToken = await setAuthToken(accessToken)
 
             res.status(200).json({ token: accessToken, ...set_AuthToken })

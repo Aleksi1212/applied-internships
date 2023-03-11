@@ -8,6 +8,7 @@ import error from '../images/error.png'
 import success from '../images/success.png'
 
 import AlertBox from "./alertBox"
+// import translate from "translate";
 
 interface alertTypes {
     message: string
@@ -31,7 +32,6 @@ function LogIn() {
             }, 2000);
         }
     }, [alert])
-
 
     async function logIn(event: any) {
         event.preventDefault()

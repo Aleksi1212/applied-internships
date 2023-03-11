@@ -15,6 +15,7 @@ interface alertType {
 
 function AddInternship() {
     const [authToken, setAuthToken] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
     const [alert, setAlert] = useState<alertType>({ message: 'message', image: success, bottom: '-5rem' })
 
     useEffect(() => {
@@ -35,6 +36,8 @@ function AddInternship() {
         const company = event.target.companyName.value
         const appliedDate = event.target.date.value
 
+        setLoading(true)
+
         const postNew = await fetch('http://localhost:3000/postNew', {
             method: 'POST',
             headers: {
@@ -48,8 +51,10 @@ function AddInternship() {
         
         if (postNewResult.type === 'success') {
             setAlert({ message: postNewResult.message, image: success, bottom: '2.5rem' })
+            setLoading(false)
         } else {
             setAlert({ message: postNewResult.message, image: error, bottom: '2.5rem' })
+            setLoading(false)
         }
 
         event.target.reset()
@@ -82,6 +87,8 @@ function AddInternship() {
                 buttons: true,
                 buttonText: 'Add New'
             }} />
+
+            <div className="loader absolute top-[40rem]" style={{ scale: loading ? '1' : '0' }}></div>
 
             <div className="w-[25rem] h-[12rem] bg-white rounded-lg shadow-md flex justify-center items-center mt-32">
                 <form className="flex flex-col h-full w-[60%] justify-evenly" onSubmit={addCompany}>

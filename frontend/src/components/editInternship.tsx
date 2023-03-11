@@ -14,6 +14,7 @@ interface alertTypes {
 }
 
 function EditInternsip() {
+    const [loading, setLoading] = useState<boolean>(false)
     const [alert, setAlert] = useState<alertTypes>({ message: 'message', image: success, bottom: '-5rem' })
     const [authToken, setAuthToken] = useState<string>('')
 
@@ -30,6 +31,8 @@ function EditInternsip() {
         const companyStatus = event.target.status.value
         const accepted_rejected_date = event.target.date.value
 
+        setLoading(true)
+
         const editCompanyStatus = await fetch('http://localhost:3000/update', {
             method: 'PUT',
             headers: {
@@ -42,8 +45,10 @@ function EditInternsip() {
         const editStatusResult = await editCompanyStatus.json()
 
         if (editStatusResult.type === 'success') {
+            setLoading(false)
             setAlert({ message: editStatusResult.message, image: success, bottom: '2.5rem' })
         } else {
+            setLoading(false)
             setAlert({ message: editStatusResult.message, image: error, bottom: '2.5rem'  })
         }
 
@@ -78,6 +83,8 @@ function EditInternsip() {
                 buttons: true,
                 buttonText: 'Edit Another'
             }} />
+
+            <div className="loader absolute top-[40rem]" style={{ scale: loading ? '1' : '0' }}></div>
 
             <div className="w-[25rem] h-[15rem] bg-white rounded-lg shadow-md mt-32 flex justify-center">
                 <form onSubmit={editStatus} className="flex flex-col justify-evenly w-[60%]">

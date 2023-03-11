@@ -23,7 +23,7 @@ async function getAdmin(name, password) {
 
 async function setAuthToken(token) {
     try {
-        const query = 'INSERT INTO admin_user (authToken) VALUES(?)'
+        const query = 'UPDATE admin_user SET authToken = ?'
         const set_AuthToken = await Promise.allSettled([
             CONNECT_TO_DB.query(query, [token])
         ])

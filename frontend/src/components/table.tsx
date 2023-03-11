@@ -7,6 +7,9 @@ import getInternships from "../data/getInternships"
 import dash from '../images/dash.png'
 import sortUp from '../images/sortUp.png'
 import sortDown from '../images/sortDown.png'
+import link from '../images/link.png'
+
+import InfoBox from "./infoBox"
 
 
 interface internshipTypes {
@@ -15,6 +18,8 @@ interface internshipTypes {
     application_status: string
     applied_date: string
     accepted_rejected_date: string
+    website_url: string
+    web_snippet: string
 }
 
 interface orderTypes {
@@ -28,10 +33,18 @@ interface headerType {
     value: string
 }
 
+interface companyDataType {
+    url: string
+    snippet: string
+    show: boolean
+}
+
 function Table() {
     const [appliedInternships, setAppliedInternships] = useState<Array<internshipTypes>>([])
     const [authenticated, setAuthenticated] = useState<boolean>(false)
     const [menu, setMenu] = useState<boolean>(false)
+
+    const [companyBox, setCompanyBox] = useState<companyDataType>({ url: '', snippet: 'snippet', show: false })
 
     const [inOrder, setInorder] = useState<orderTypes>({ orderBy: 'id', direction: true, clicked: false })
 
@@ -105,6 +118,23 @@ function Table() {
                 <div className={menu ? 'menuBar absolute top-2 -rotate-45' : 'menuBar rotate-0'}></div>
             </button>
 
+            <InfoBox aboutCompany={{
+                url: companyBox.url,
+                snippet: companyBox.snippet,
+                show: companyBox.show,
+                action: setCompanyBox
+            }} />
+
+            {/* <div className="w-[25rem] h-[20rem] bg-white fixed right-10 top-36 rounded-md shadow-lg p-6 flex flex-col justify-between">
+                <div className="w-full max-h-[90%] overflow-auto bg-red-500" style={{ overflowWrap: 'break-word' }}>
+                    hello how are you im am good how about you i dont know i like to play video games
+                </div>
+
+                <div className="w-full ">
+                    <h1>test</h1>
+                </div>
+            </div> */}
+
             <table className="table-auto w-[60rem] mt-32 shadow-md rounded-tr-md rounded-tl-md bg-[#2F2F2F]">
                 <thead>
                     <tr className="text-white">
@@ -123,6 +153,7 @@ function Table() {
                                 )
                             })
                         }
+                        <th>Website</th>
                     </tr>
                 </thead>
 
@@ -130,12 +161,18 @@ function Table() {
                     {
                         appliedInternships.map((appliedInternship: internshipTypes) => {
                             return (
-                                <tr key={appliedInternship.id} style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }} className="hover:brightness-90">
+                                <tr onClick={() => setCompanyBox({ url: appliedInternship.website_url, snippet: appliedInternship.web_snippet, show: true })} key={appliedInternship.id} style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }} className="hover:brightness-95 cursor-pointer">
                                     <td className="content">{appliedInternship.id}</td>
                                     <td className="content">{appliedInternship.company}</td>
                                     <td className="content">{appliedInternship.application_status}</td>
                                     <td className="content">{new Date(appliedInternship.applied_date).toLocaleDateString('en-GB')}</td>
                                     <td className="content">{appliedInternship.accepted_rejected_date !== null ? new Date(appliedInternship.accepted_rejected_date).toLocaleDateString('en-GB') : '-'}</td>
+                                    
+                                    <td className="border h-[2rem] relative">
+                                        <Link to={appliedInternship.website_url} target="_blank" className="h-full w-full top-0 flex justify-center items-center absolute">
+                                            <img src={link} alt="link" />
+                                        </Link>
+                                    </td>
                                 </tr>
                             )
                         })

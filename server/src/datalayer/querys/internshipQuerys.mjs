@@ -1,7 +1,15 @@
 'use strict';
 
-import connection from "../config.mjs";
 import mariadb from 'mariadb'
+import dotenv from 'dotenv'
+import translate from 'translate'
+
+import connection from "../config.mjs";
+import getInfoAboutCompany from "./webSearch.mjs";
+
+dotenv.config()
+translate.engine = 'deepl'
+translate.key = process.env.DEEPL_API_KEY
 
 const CONNECT_TO_DB = await mariadb.createConnection(connection)
 
@@ -25,13 +33,18 @@ async function addNewInternship(companyName, applied_date, authenticated) {
         }
         
         const query = `
-            INSERT INTO applied_internships (company, application_status, applied_date, accepted_rejected_date)
-            VALUES(?, ?, ?, ?)
+            INSERT INTO applied_internships (company, application_status, applied_date, accepted_rejected_date, website_url, web_snippet)
+            VALUES(?, ?, ?, ?, ?, ?)
         `
 
+        const webSearch = await getInfoAboutCompany(companyName)
+        const websiteUrl = webSearch.webPages.url
+        const websiteSnippet = await translate(webSearch.webPages.snippet, { from: 'fi', to: 'en' })
+
         const addNewInternshipPromise = await Promise.allSettled([
-            CONNECT_TO_DB.query(query, [companyName, 'pending', applied_date, '-'])
+            CONNECT_TO_DB.query(query, [companyName, 'pending', applied_date, null, websiteUrl, websiteSnippet])
         ])
+
 
         return addNewInternshipPromise[0].status === 'fulfilled' ? {
             message: 'Added Succesfully', type: 'success'
