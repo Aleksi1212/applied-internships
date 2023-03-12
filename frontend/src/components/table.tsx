@@ -38,6 +38,7 @@ interface headerType {
 }
 
 interface companyDataType {
+    companyName: string
     url: string
     snippet: string
     show: boolean
@@ -54,7 +55,7 @@ function Table() {
     const [authenticated, setAuthenticated] = useState<boolean>(false)
 
     const [menu, setMenu] = useState<boolean>(false)
-    const [companyBox, setCompanyBox] = useState<companyDataType>({ url: '', snippet: 'snippet', show: false })
+    const [companyBox, setCompanyBox] = useState<companyDataType>({ companyName: '', url: '', snippet: 'snippet', show: false })
     const [alert, setAlert] = useState<alertTypes>({ message: 'none', image: succes, left: '-15rem' })
 
     const [inOrder, setInorder] = useState<orderTypes>({ orderBy: 'id', direction: true, clicked: false })
@@ -159,6 +160,7 @@ function Table() {
             </button>
 
             <InfoBox aboutCompany={{
+                companyName: companyBox.companyName,
                 url: companyBox.url,
                 snippet: companyBox.snippet,
                 show: companyBox.show,
@@ -191,7 +193,7 @@ function Table() {
                     {
                         appliedInternships.map((appliedInternship: internshipTypes) => {
                             return (
-                                <tr onClick={() => setCompanyBox({ url: appliedInternship.website_url, snippet: appliedInternship.web_snippet, show: true })} key={appliedInternship.id} style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }} className="hover:brightness-95 cursor-pointer">
+                                <tr onClick={() => setCompanyBox({  companyName: appliedInternship.company, url: appliedInternship.website_url, snippet: appliedInternship.web_snippet, show: true })} key={appliedInternship.id} style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }} className="hover:brightness-95 cursor-pointer">
                                     <td className="content">{appliedInternship.id}</td>
                                     <td className="content">{appliedInternship.company}</td>
                                     <td className="content">{appliedInternship.application_status}</td>

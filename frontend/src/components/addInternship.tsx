@@ -38,7 +38,7 @@ function AddInternship() {
 
         setLoading(true)
 
-        const postNew = await fetch('http://localhost:3000/postNew', {
+        const postNew = await fetch('http://localhost:8080/postNew', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authToken}`,

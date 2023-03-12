@@ -1,7 +1,7 @@
 
 async function logOut(token: string) {
     try {
-        const invalidateToken = await fetch('http://localhost:3000/logOut', {
+        const invalidateToken = await fetch('http://localhost:8080/logOut', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

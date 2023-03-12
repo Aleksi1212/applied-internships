@@ -1,6 +1,6 @@
 async function checkToken(token: string) {
     try {
-        const checkAuthToken = await fetch('http://localhost:3000/checkToken', {
+        const checkAuthToken = await fetch('http://localhost:8080/checkToken', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
