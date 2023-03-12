@@ -9,8 +9,11 @@ import dash from '../images/dash.png'
 import sortUp from '../images/sortUp.png'
 import sortDown from '../images/sortDown.png'
 import link from '../images/link.png'
+import error from '../images/error.png'
+import succes from '../images/success.png'
 
 import InfoBox from "./infoBox"
+import AlertBox from "./alertBox"
 
 
 interface internshipTypes {
@@ -40,12 +43,19 @@ interface companyDataType {
     show: boolean
 }
 
+interface alertTypes {
+    message: string
+    image: string,
+    left: string
+}
+
 function Table() {
     const [appliedInternships, setAppliedInternships] = useState<Array<internshipTypes>>([])
     const [authenticated, setAuthenticated] = useState<boolean>(false)
-    const [menu, setMenu] = useState<boolean>(false)
 
+    const [menu, setMenu] = useState<boolean>(false)
     const [companyBox, setCompanyBox] = useState<companyDataType>({ url: '', snippet: 'snippet', show: false })
+    const [alert, setAlert] = useState<alertTypes>({ message: 'none', image: succes, left: '-15rem' })
 
     const [inOrder, setInorder] = useState<orderTypes>({ orderBy: 'id', direction: true, clicked: false })
 
@@ -72,7 +82,6 @@ function Table() {
                 localStorage.setItem('AuthToken', '')
                 setAuthenticated(false)
             } else {
-                console.log(checkAuthToken)
                 setAuthenticated(true)
             }
         }
@@ -83,6 +92,14 @@ function Table() {
             isMounted = false
         }
     }, [inOrder])
+
+    useEffect(() => {
+        if (alert.left !== '-15rem') {
+            setTimeout(() => {
+                setAlert({ message: alert.message, image: alert.image, left: '-15rem' })
+            }, 2000);
+        }
+    }, [alert])
 
 
     return (
@@ -101,8 +118,9 @@ function Table() {
                                     if (logOut_and_invalidateToken.type === 'success') {
                                         localStorage.setItem('AuthToken', '')
                                         setAuthenticated(false)
+                                        setAlert({ message: 'Succesfully Logged Out', image: succes, left: '2.5rem' })
                                     } else {
-                                        console.log(logOut_and_invalidateToken)
+                                        setAlert({ message: 'Error Logging Out', image: error, left: '2.5rem' })
                                     }
 
                                 }}>Log out</button>
@@ -124,6 +142,15 @@ function Table() {
                     </div>
                 </div>
             </div>
+
+            <AlertBox alert={{
+                message: alert.message,
+                image: alert.image,
+                positions: { bottom: '10rem', left: alert.left },
+                buttons: false,
+                buttonText: '',
+                position: false
+            }} />
 
             <button onClick={() => setMenu(!menu)} className="fixed left-12 transition-all duration-300 top-12 h-[1.5rem] flex flex-col items-center justify-between">
                 <div className={menu ? 'menuBar absolute top-2 rotate-45' : 'menuBar rotate-0'}></div>

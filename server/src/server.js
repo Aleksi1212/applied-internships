@@ -49,7 +49,7 @@ app
             const { adminName, adminPassword } = req.body || {}
     
             const adminLogIn = await getAdmin(adminName, adminPassword)
-            const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20m' })
+            const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
 
             res.status(200).json({ token: accessToken, type: 'success' })
             

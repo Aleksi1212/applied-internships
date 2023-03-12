@@ -84,9 +84,10 @@ function LogIn() {
             <AlertBox alert={{
                 message: alert.message,
                 image: alert.image,
-                bottom: alert.bottom,
+                positions: { bottom: alert.bottom, left: 'none' },
                 buttons: false,
-                buttonText: ''
+                buttonText: '',
+                position: true
             }} />
 
             <div className="w-[25rem] h-[12rem] bg-white rounded-lg shadow-md mt-32 flex justify-center">

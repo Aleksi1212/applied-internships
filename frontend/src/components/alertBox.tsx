@@ -1,12 +1,18 @@
 
 import { Link } from "react-router-dom"
 
+interface positionTypes {
+    bottom: string
+    left: string
+}
+
 interface alertData {
     message: string
     image: string
-    bottom: string
+    positions: positionTypes
     buttons: boolean
-    buttonText: string
+    buttonText: string,
+    position: boolean
 }
 
 interface alert {
@@ -14,13 +20,13 @@ interface alert {
 }
 
 function AlertBox({ alert }: alert) {
-    const { message, image, bottom, buttons, buttonText } = alert || {}
+    const { message, image, positions, buttons, buttonText, position } = alert || {}
 
     return (
         <>
             {
                 buttons ? (
-                    <div style={{ bottom: bottom }} className="absolute bg-[#2F2F2F] w-[17.5rem] h-[4rem] transition-all duration-200 rounded-md flex flex-col justify-evenly items-center" >
+                    <div style={{ bottom: positions.bottom, left: positions.left, position: position ? 'absolute' : 'fixed' }} className="bg-[#2F2F2F] w-[17.5rem] h-[4rem] transition-all duration-200 rounded-md flex flex-col justify-evenly items-center" >
                         <div className="w-full flex text-white gap-x-2 px-2">
                             <img src={image} alt="alertImage" />
                             <p>|</p>
@@ -41,7 +47,7 @@ function AlertBox({ alert }: alert) {
                     </div>
 
                 ) : (
-                    <div style={{ bottom: bottom }} className="absolute bg-[#2F2F2F] rounded-md h-[2.5rem] gap-x-2 pl-3 pr-4 flex items-center transition-all duration-500 text-white">
+                    <div style={{ bottom: positions.bottom, left: positions.left }} className="absolute bg-[#2F2F2F] rounded-md h-[2.5rem] gap-x-2 pl-3 pr-4 flex items-center transition-all duration-500 text-white">
                         <img src={image} alt="alertImage" />
                         <span>|</span>
                         <h1>{message}</h1>

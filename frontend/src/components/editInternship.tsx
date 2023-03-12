@@ -79,9 +79,10 @@ function EditInternsip() {
             <AlertBox alert={{
                 message: alert.message,
                 image: alert.image,
-                bottom: alert.bottom,
+                positions: { bottom: alert.bottom, left: 'none' },
                 buttons: true,
-                buttonText: 'Edit Another'
+                buttonText: 'Edit Another',
+                position: true
             }} />
 
             <div className="loader absolute top-[40rem]" style={{ scale: loading ? '1' : '0' }}></div>
