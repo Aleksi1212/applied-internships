@@ -21,7 +21,13 @@ function EditInternsip() {
     useEffect(() => {
         const token = localStorage.getItem('AuthToken') || ''
         setAuthToken(token)
-    }, [])
+
+        if (alert.bottom !== '-5rem') {
+            setTimeout(() => {
+                setAlert({ message: alert.message, image: alert.image, bottom: '-5rem' })
+            }, 2000);
+        }
+    }, [alert])
 
 
     async function editStatus(event: any) {

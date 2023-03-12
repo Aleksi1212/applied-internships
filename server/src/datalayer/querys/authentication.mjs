@@ -3,18 +3,26 @@
 import connection from '../config.mjs';
 import mariadb from 'mariadb'
 
+import validateInput from './inputValidation.mjs';
+
 const CONNECT_TO_DB = await mariadb.createConnection(connection)
+
 
 async function getAdmin(name, password) {
     try {
+        const validate_Input = validateInput(name, password)
+        if (!validate_Input.valid1 || !validate_Input.valid2) {
+            return { message: 'Malicious Input Detected', data:[], type: 'error' }
+        }
+
         const query = 'SELECT * FROM admin_user WHERE username = ? AND userPassword = ?'
         const getAdminData = await CONNECT_TO_DB.query(query, [name, password])
 
         if (getAdminData.length <= 0) {
-            return { message: 'No data', data: [], type: 'error' }
+            return { message: 'Invalid Username Or Password', data: [], type: 'error' }
         }
 
-        return { message: 'Success', data: getAdminData, type: 'success' }
+        return { message: 'Successfully Logged In', data: getAdminData, type: 'success' }
 
     } catch(err) {
         return { message: 'Error', data: [], type: 'error' }

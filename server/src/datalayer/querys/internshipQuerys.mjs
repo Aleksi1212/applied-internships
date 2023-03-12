@@ -6,6 +6,7 @@ import translate from 'translate'
 
 import connection from "../config.mjs";
 import getInfoAboutCompany from "./webSearch.mjs";
+import validateInput from './inputValidation.mjs';
 
 dotenv.config()
 translate.engine = 'deepl'
@@ -28,6 +29,11 @@ async function getAll(orderByValue, direction) {
 
 async function addNewInternship(companyName, applied_date, authenticated) {
     try {
+        const validate_Input = validateInput(companyName, 'valid')
+        if (!validate_Input.valid1 || !validate_Input.valid2) {
+            return { message: 'Malicious input detected', type: 'error' }
+        }
+
         if (!authenticated) {
             return { message: 'Unauthorized', type: 'error' }
         }
@@ -59,6 +65,11 @@ async function addNewInternship(companyName, applied_date, authenticated) {
 
 async function updateInternship(id, newStatus, accepted_rejected_date, authenticated) {
     try {
+        const validate_Input = validateInput(newStatus, 'valid')
+        if (!validate_Input.valid1 || !validate_Input.valid2) {
+            return { message: 'Malicious input detected', type: 'error' }
+        }
+
         if (!authenticated) {
             return { message: 'Unauthorized', type: 'error' }
         }

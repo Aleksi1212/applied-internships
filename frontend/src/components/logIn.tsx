@@ -47,13 +47,13 @@ function LogIn() {
             body: JSON.stringify({ adminName: userName, adminPassword: password })
         })
 
-        const getAuthToken = await logInAdmin.json()
+        const logInStatus = await logInAdmin.json()
 
-        if (getAuthToken.type === 'success') {
-            localStorage.setItem('AuthToken', getAuthToken.token)
-            setAlert({ message: 'Succesfully Logged In', image: success, bottom: '2.5rem' })
+        if (logInStatus.type === 'success') {
+            localStorage.setItem('AuthToken', logInStatus.token)
+            setAlert({ message: logInStatus.message, image: success, bottom: '2.5rem' })
         } else {
-            setAlert({ message: 'Invalid Username Or Password', image: error, bottom: '2.5rem' })
+            setAlert({ message: logInStatus.message, image: error, bottom: '2.5rem' })
         }
 
         event.target.reset()

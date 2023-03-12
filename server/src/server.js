@@ -13,16 +13,17 @@ import authenticateToken from './middleware.mjs';
 const app = express()
 dotenv.config()
 
-const whitelist = ['http://localhost:5173']
+const corsWhiteList = ['http://localhost:5173']
 const corsOptions = {
     origin: (origin, callback) => {
-        if (whitelist.indexOf(origin) !== 1 || !origin) {
+        if (corsWhiteList.indexOf(origin) !== 1 || !origin) {
             callback(null, true)
         } else {
             callback(new Error('Not allowed by cors'))
         }
     }
 }
+
 
 app.use(cors(corsOptions))
 app.use(express.json())
@@ -47,14 +48,13 @@ app
     .post('/logIn', async (req, res) => {
         try {
             const { adminName, adminPassword } = req.body || {}
-    
+
             const adminLogIn = await getAdmin(adminName, adminPassword)
             const accessToken = jwt.sign({ username: adminLogIn.data[0].username, password: adminLogIn.data[0].userPassword }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '24h' })
-
-            res.status(200).json({ token: accessToken, type: 'success' })
-            
+            res.status(200).json({ token: accessToken, ...adminLogIn })
+                
         } catch(err) {
-            res.status(401).json({token: 'error', type: 'error' })
+            res.status(401).json({token: 'error', message: 'Invalid Username Or Password', type: 'error' })
         }
     })
 
