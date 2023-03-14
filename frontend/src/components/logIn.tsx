@@ -23,6 +23,8 @@ function LogIn() {
     const [authToken, setAuthToken] = useState<string>('')
 
     useEffect(() => {
+        document.title = 'Applied Internships - Log In'
+        
         const token = localStorage.getItem('AuthToken') || ''
         setAuthToken(token)
 
@@ -39,7 +41,7 @@ function LogIn() {
         const userName = event.target.adminName.value
         const password = event.target.adminPassword.value
 
-        const logInAdmin = await fetch('http://localhost:8080/logIn', {
+        const logInAdmin = await fetch('http://13.53.129.73:3000/logIn', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -77,7 +79,7 @@ function LogIn() {
     return (
         <section className="w-full h-[100svh] flex flex-col items-center relative overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Log In</h1>
-            <Link to="/" className="back absolute">
+            <Link to="/" className="back absolute left-10 top-36">
                 Back To Table
             </Link>
 

@@ -19,6 +19,8 @@ function EditInternsip() {
     const [authToken, setAuthToken] = useState<string>('')
 
     useEffect(() => {
+        document.title = 'Applied Internships - Edit Company Status'
+
         const token = localStorage.getItem('AuthToken') || ''
         setAuthToken(token)
 
@@ -39,7 +41,7 @@ function EditInternsip() {
 
         setLoading(true)
 
-        const editCompanyStatus = await fetch('http://localhost:8080/update', {
+        const editCompanyStatus = await fetch('http://localhost:3000/update', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${authToken}`,
@@ -78,9 +80,15 @@ function EditInternsip() {
     return (
         <section className="w-full h-[100svh] flex flex-col items-center relative overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Edit Company Status</h1>
-            <Link to="/" className="back absolute">
-                Back To Table
-            </Link>
+
+            <div className="absolute left-10 top-36 flex flex-col gap-y-2">
+                <Link to="/" className="back">
+                    Back To Table
+                </Link>
+                <Link to="/addCompany" className="back">
+                    Add New Company
+                </Link>
+            </div>
 
             <AlertBox alert={{
                 message: alert.message,

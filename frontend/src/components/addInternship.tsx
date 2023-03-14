@@ -18,7 +18,10 @@ function AddInternship() {
     const [loading, setLoading] = useState<boolean>(false)
     const [alert, setAlert] = useState<alertType>({ message: 'message', image: success, bottom: '-5rem' })
 
+
     useEffect(() => {
+        document.title = 'Applied Internships - Add New Company'
+
         const token = localStorage.getItem('AuthToken') || ''
         setAuthToken(token)
 
@@ -38,7 +41,7 @@ function AddInternship() {
 
         setLoading(true)
 
-        const postNew = await fetch('http://localhost:8080/postNew', {
+        const postNew = await fetch('http://13.53.129.73:3000/postNew', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authToken}`,
@@ -77,9 +80,15 @@ function AddInternship() {
     return (
         <section className="w-full h-[100svh] flex flex-col relative items-center bg-[#F6F7F9] overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Add New Internship</h1>
-            <Link to="/" className="back absolute">
-                Back To Table
-            </Link>
+            <div className="absolute left-10 top-36 flex flex-col gap-y-2">
+                <Link to="/" className="back">
+                    Back To Table
+                </Link>
+                <Link to="/editStatus" className="back">
+                    Edit Company Status
+                </Link>
+            </div>
+
             <AlertBox alert={{
                 message: alert.message,
                 image: alert.image,

@@ -4,7 +4,7 @@
 
 @layer components {
     .back {
-        @apply left-10 top-32 bg-[#2F2F2F] rounded-md text-white w-[10rem] flex justify-center items-center h-[2rem] hover:brightness-90 active:scale-95 shadow-md
+        @apply bg-[#2F2F2F] rounded-md text-white w-[12rem] flex justify-center items-center h-[2rem] hover:brightness-90 active:scale-95 shadow-md
     }
 
     #passwordStateButton:hover ~ #passwordPopup {

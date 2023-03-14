@@ -14,6 +14,7 @@ import succes from '../images/success.png'
 
 import InfoBox from "./infoBox"
 import AlertBox from "./alertBox"
+import Menu from "./menu"
 
 
 interface internshipTypes {
@@ -69,6 +70,8 @@ function Table() {
     ]
     
     useEffect(() => {
+        document.title = 'Applied Internships - Table'
+
         let isMounted = true
 
         async function getData() {
@@ -106,43 +109,13 @@ function Table() {
     return (
         <section className="w-full flex flex-col items-center pb-32">
             <h1 className="text-3xl border-b-2 border-[#2F2F2F] absolute top-10">Applied Internships</h1>
-
-            <div className="fixed transition-all duration-300 h-full w-[20rem] shadow-xl bg-white flex flex-col items-center pt-44" style={{ left: menu ? '0px' : '-20rem' }}>
-                <div className="w-full flex flex-col items-center gap-y-[2px]">
-                    {
-                        authenticated ? (
-                            <div className="menuButtonContainer">
-                                <button className="menuButton" onClick={async () => {
-
-                                    const logOut_and_invalidateToken = await logOut(localStorage.getItem('AuthToken') || '')
-
-                                    if (logOut_and_invalidateToken.type === 'success') {
-                                        localStorage.setItem('AuthToken', '')
-                                        setAuthenticated(false)
-                                        setAlert({ message: 'Succesfully Logged Out', image: succes, left: '2.5rem' })
-                                    } else {
-                                        setAlert({ message: 'Error Logging Out', image: error, left: '2.5rem' })
-                                    }
-
-                                }}>Log out</button>
-                            </div>
-                        ) : (
-                            <div className="menuButtonContainer">
-                                <Link to="/logIn" className="menuButton">Log In</Link>
-                            </div>
-                        )
-                    }
-
-                    <div className="menuButtonContainer flex justify-center">
-                        <div className="w-[95%] h-[2px] top-[-2px] bg-[#5d5d5d] absolute"></div>
-                        <Link to={authenticated ? '/addCompany' : '/logIn'} className="menuButton">Add New Company</Link>
-                    </div>
-                    <div className="menuButtonContainer flex justify-center">
-                        <div className="w-[95%] h-[2px] top-[-2px] bg-[#5d5d5d] absolute"></div>
-                        <Link to={authenticated ? '/editStatus' : '/logIn'} className="menuButton">Edit Company Status</Link>
-                    </div>
-                </div>
-            </div>
+            
+            <Menu menu={{
+                authenticated: authenticated,
+                show: menu,
+                alert: setAlert,
+                changeAuth: setAuthenticated
+            }} />
 
             <AlertBox alert={{
                 message: alert.message,
