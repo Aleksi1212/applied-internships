@@ -42,7 +42,7 @@ function LogIn() {
         const userName = event.target.adminName.value
         const password = event.target.adminPassword.value
 
-        const logInAdmin = await fetch('http://13.53.129.73:3000/logIn', {
+        const logInAdmin = await fetch('https://13.53.129.73:3000/logIn', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

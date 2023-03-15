@@ -45,7 +45,7 @@ function EditInternsip() {
 
         setLoading(true)
 
-        const editCompanyStatus = await fetch('http://localhost:3000/update', {
+        const editCompanyStatus = await fetch('https://13.53.129.73:3000/update', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${authToken}`,

@@ -1,6 +1,6 @@
 async function getInternships(orderBy: string, direction: boolean) {
     try {
-        const getAll_Internships = await fetch(`http://13.53.129.73:3000/getAll/${orderBy}=${direction ? 'ASC' : 'DESC'}`, {
+        const getAll_Internships = await fetch(`https://13.53.129.73:3000/getAll/${orderBy}=${direction ? 'ASC' : 'DESC'}`, {
             method: 'GET'
         })
         const all_Internships = await getAll_Internships.json()

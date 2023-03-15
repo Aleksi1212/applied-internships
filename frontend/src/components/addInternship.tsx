@@ -45,7 +45,7 @@ function AddInternship() {
 
         setLoading(true)
 
-        const postNew = await fetch('http://13.53.129.73:3000/postNew', {
+        const postNew = await fetch('https://13.53.129.73:3000/postNew', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authToken}`,
