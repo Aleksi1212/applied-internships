@@ -12,7 +12,7 @@
     }
 
     .content {
-        @apply border px-4 py-2
+        @apply border px-4 py-2 xl:text-base md:text-sm
     }
 
     #passwordField::-ms-reveal, #passwordField::-ms-clear {
@@ -44,7 +44,7 @@
     }
 
     .headerButton {
-        @apply w-full h-[3rem] flex justify-center items-center gap-x-4
+        @apply w-full h-[3rem] flex justify-center items-center xl:gap-x-4 md:gap-x-2 xxl:text-lg xl:text-base md:text-sm text-sm
     }
 
     .statusScreenButton {
@@ -53,6 +53,14 @@
 
     #url:hover > #border {
         @apply flex
+    }
+
+    #infoBox::-webkit-scrollbar {
+        @apply bg-transparent w-[5px]
+    }
+
+    #infoBox::-webkit-scrollbar-thumb {
+        @apply w-[full] bg-[#9d9d9d] opacity-50 rounded-full
     }
 }
 
@@ -89,4 +97,5 @@
     0%, 80%, 100% { box-shadow: 0 2.5em 0 -1.3em }
     40% { box-shadow: 0 2.5em 0 0 }
   }
+
       

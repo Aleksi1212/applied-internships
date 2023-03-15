@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom"
-
 import { useState, useEffect } from "react"
 
 import showPasswordIcon from '../images/showPassword.png'
 import hidePasswordIcon from '../images/hidePassword.png'
 import error from '../images/error.png'
 import success from '../images/success.png'
+import table from "../images/table.png"
 
 import AlertBox from "./alertBox"
-// import translate from "translate";
+import useWindowDimensions from "../hooks/windowDimensions"
 
 interface alertTypes {
     message: string
@@ -19,8 +19,9 @@ interface alertTypes {
 function LogIn() {
     const [passwordState, setPasswordState] = useState<boolean>(true)
     const [alert, setAlert] = useState<alertTypes>({ message: 'message', image: success, bottom: '-5rem' })
-    
     const [authToken, setAuthToken] = useState<string>('')
+
+    const windowDimensions = useWindowDimensions()
 
     useEffect(() => {
         document.title = 'Applied Internships - Log In'
@@ -79,8 +80,14 @@ function LogIn() {
     return (
         <section className="w-full h-[100svh] flex flex-col items-center relative overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Log In</h1>
-            <Link to="/" className="back absolute left-10 top-36">
-                Back To Table
+            <Link to="/" className="lg:back absolute left-10 top-36 active:scale-95">
+                {
+                    windowDimensions.width < 1080 ? (
+                        <img src={table} alt="table" width={35} />
+                    ) : (
+                        'Back To Table'
+                    )
+                }
             </Link>
 
             <AlertBox alert={{

@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom"
-
 import { useState, useEffect } from "react"
 
 import error from '../images/error.png'
 import success from '../images/success.png'
+import table from '../images/table.png'
+import add from '../images/add.png'
 
 import AlertBox from "./alertBox"
+import useWindowDimensions from "../hooks/windowDimensions"
 
 interface alertTypes {
     message: string
@@ -17,6 +19,8 @@ function EditInternsip() {
     const [loading, setLoading] = useState<boolean>(false)
     const [alert, setAlert] = useState<alertTypes>({ message: 'message', image: success, bottom: '-5rem' })
     const [authToken, setAuthToken] = useState<string>('')
+
+    const windowDimensions = useWindowDimensions()
 
     useEffect(() => {
         document.title = 'Applied Internships - Edit Company Status'
@@ -81,12 +85,24 @@ function EditInternsip() {
         <section className="w-full h-[100svh] flex flex-col items-center relative overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Edit Company Status</h1>
 
-            <div className="absolute left-10 top-36 flex flex-col gap-y-2">
-                <Link to="/" className="back">
-                    Back To Table
+            <div className="absolute left-10 top-36 flex lg:flex-col gap-y-2 gap-x-4">
+                <Link to="/" className="lg:back active:scale-95">
+                    {
+                        windowDimensions.width < 1080 ? (
+                            <img src={table} alt="table" width={35} />
+                        ) : (
+                            'Back To Table'
+                        )
+                    }
                 </Link>
-                <Link to="/addCompany" className="back">
-                    Add New Company
+                <Link to="/editStatus" className="lg:back active:scale-95">
+                {
+                        windowDimensions.width < 1080 ? (
+                            <img src={add} alt="add" width={35} />
+                        ) : (
+                            'Edit Company Status'
+                        )
+                    }
                 </Link>
             </div>
 

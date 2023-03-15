@@ -4,8 +4,11 @@ import { useEffect, useState } from "react"
 
 import error from '../images/error.png'
 import success from '../images/success.png'
+import table from '../images/table.png'
+import edit from '../images/edit.png'
 
 import AlertBox from "./alertBox"
+import useWindowDimensions from "../hooks/windowDimensions"
 
 interface alertType {
     message: string
@@ -18,6 +21,7 @@ function AddInternship() {
     const [loading, setLoading] = useState<boolean>(false)
     const [alert, setAlert] = useState<alertType>({ message: 'message', image: success, bottom: '-5rem' })
 
+    const windowDimensions = useWindowDimensions()
 
     useEffect(() => {
         document.title = 'Applied Internships - Add New Company'
@@ -80,12 +84,25 @@ function AddInternship() {
     return (
         <section className="w-full h-[100svh] flex flex-col relative items-center bg-[#F6F7F9] overflow-hidden">
             <h1 className="text-3xl absolute top-10 border-b-2 border-[#2F2F2F]">Add New Internship</h1>
-            <div className="absolute left-10 top-36 flex flex-col gap-y-2">
-                <Link to="/" className="back">
-                    Back To Table
+
+            <div className="absolute left-10 top-36 flex lg:flex-col gap-y-2 gap-x-4">
+                <Link to="/" className="lg:back active:scale-95">
+                    {
+                        windowDimensions.width < 1080 ? (
+                            <img src={table} alt="table" width={35} />
+                        ) : (
+                            'Back To Table'
+                        )
+                    }
                 </Link>
-                <Link to="/editStatus" className="back">
-                    Edit Company Status
+                <Link to="/editStatus" className="lg:back active:scale-95">
+                {
+                        windowDimensions.width < 1080 ? (
+                            <img src={edit} alt="edit" width={35} />
+                        ) : (
+                            'Edit Company Status'
+                        )
+                    }
                 </Link>
             </div>
 

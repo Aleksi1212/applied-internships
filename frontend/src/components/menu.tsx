@@ -10,6 +10,7 @@ interface menuData {
     show: boolean
     alert: any
     changeAuth: any
+    windowX: number
 }
 
 interface menu {
@@ -17,10 +18,12 @@ interface menu {
 }
 
 function Menu({ menu }: menu) {
-    const {  authenticated, show, alert, changeAuth } = menu || {}
+    const {  authenticated, show, alert, changeAuth, windowX } = menu || {}
 
     return (
-        <div className="fixed transition-all duration-300 h-full w-[20rem] shadow-xl bg-white flex flex-col items-center pt-44" style={{ left: show ? '0px' : '-20rem' }}>
+        <div className="fixed transition-all duration-300 h-full xxl:w-[20rem] xl:w-[17.5rem] md:w-[40rem] shadow-xl bg-white flex flex-col items-center pt-44"
+            style={windowX <= 1080 ? { left: show ? '0px' : '-40rem' } : { left: show ? '0px' : '-20rem' }}>
+
             <div className="w-full flex flex-col items-center gap-y-[2px]">
                 {
                     authenticated ? (

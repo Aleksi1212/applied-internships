@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
+import useWindowDimensions from "../hooks/windowDimensions"
 
 import checkToken  from "../authentication/validateAuthToken"
-import logOut from "../authentication/logOut"
 import getInternships from "../data/getInternships"
 
 import dash from '../images/dash.png'
 import sortUp from '../images/sortUp.png'
 import sortDown from '../images/sortDown.png'
 import link from '../images/link.png'
-import error from '../images/error.png'
 import succes from '../images/success.png'
 
 import InfoBox from "./infoBox"
@@ -60,14 +59,16 @@ function Table() {
     const [alert, setAlert] = useState<alertTypes>({ message: 'none', image: succes, left: '-15rem' })
 
     const [inOrder, setInorder] = useState<orderTypes>({ orderBy: 'id', direction: true, clicked: false })
+    const windowDimensions = useWindowDimensions()
 
     const HEADERS: Array<headerType> = [
         { inorder: 'id', value: 'Id' },
         { inorder: 'company', value: 'Company' },
-        { inorder: 'application_status', value: 'Application Status' },
-        { inorder: 'applied_date', value: 'Applied Date' },
-        { inorder: 'accepted_rejected_date', value: 'Accepted / Rejected Date' }
+        { inorder: 'application_status', value: windowDimensions.width <= 976 ? 'Status' : 'Application Status' },
+        { inorder: 'applied_date', value: 'Date' },
+        { inorder: 'accepted_rejected_date', value: windowDimensions.width <= 976 ? 'ACC / REJ Date' : 'Accepted / Rejected Date' }
     ]
+
     
     useEffect(() => {
         document.title = 'Applied Internships - Table'
@@ -106,15 +107,66 @@ function Table() {
     }, [alert])
 
 
+
     return (
         <section className="w-full flex flex-col items-center pb-32">
             <h1 className="text-3xl border-b-2 border-[#2F2F2F] absolute top-10">Applied Internships</h1>
-            
+
+            <table className="table-auto xxl:w-[60rem] xl:w-[55rem]  mt-32 shadow-md rounded-tr-md rounded-tl-md bg-[#2F2F2F]">
+                <thead>
+                    <tr className="text-white">
+                        {
+                            HEADERS.map((header: headerType) => {
+                                return (
+                                    <th key={header.inorder}>
+                                        <button className="headerButton" onClick={() => setInorder({ orderBy: header.inorder, direction: !inOrder.direction, clicked: true })}>
+                                            <h1>{header.value}</h1>
+                                            <img src={
+                                                inOrder.direction && inOrder.clicked && inOrder.orderBy === header.inorder ? sortUp : 
+                                                !inOrder.direction && inOrder.clicked && inOrder.orderBy === header.inorder ? sortDown : dash
+                                            } alt="headerImage" />
+                                        </button>
+                                    </th>
+                                )
+                            })
+                        }
+                        <th className="xxl:text-lg xl:text-base md:text-sm">Website</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {
+                        appliedInternships.map((appliedInternship: internshipTypes) => {
+                            return (
+                                
+                                <tr key={appliedInternship.id} className="hover:brightness-95 cursor-pointer relative" 
+                                    style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }} 
+                                    onClick={() => setCompanyBox({  companyName: appliedInternship.company, url: appliedInternship.website_url, snippet: appliedInternship.web_snippet, show: true })}>
+                                    
+                                    <td className="content">{appliedInternship.id}</td>
+                                    <td className="content">{appliedInternship.company}</td>
+                                    <td className="content">{appliedInternship.application_status}</td>
+                                    <td className="content">{new Date(appliedInternship.applied_date).toLocaleDateString('en-GB')}</td>
+                                    <td className="content">{appliedInternship.accepted_rejected_date !== null ? new Date(appliedInternship.accepted_rejected_date).toLocaleDateString('en-GB') : '-'}</td>
+                                    
+                                    <td className="border h-[2rem] relative">
+                                        <Link to={appliedInternship.website_url} target="_blank" className="h-full w-full top-0 flex justify-center items-center absolute">
+                                            <img src={link} alt="link" />
+                                        </Link>
+                                    </td>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
+            </table>
+
             <Menu menu={{
                 authenticated: authenticated,
                 show: menu,
                 alert: setAlert,
-                changeAuth: setAuthenticated
+                changeAuth: setAuthenticated,
+                windowX: windowDimensions.width
             }} />
 
             <AlertBox alert={{
@@ -137,53 +189,9 @@ function Table() {
                 url: companyBox.url,
                 snippet: companyBox.snippet,
                 show: companyBox.show,
-                action: setCompanyBox
+                action: setCompanyBox,
+                mobile: windowDimensions.width <= 1080 ? true : false
             }} />
-
-            <table className="table-auto w-[60rem] mt-32 shadow-md rounded-tr-md rounded-tl-md bg-[#2F2F2F]">
-                <thead>
-                    <tr className="text-white">
-                        {
-                            HEADERS.map((header: headerType) => {
-                                return (
-                                    <th key={header.inorder}>
-                                        <button className="headerButton" onClick={() => setInorder({ orderBy: header.inorder, direction: !inOrder.direction, clicked: true })}>
-                                            <h1>{header.value}</h1>
-                                            <img src={
-                                                inOrder.direction && inOrder.clicked && inOrder.orderBy === header.inorder ? sortUp : 
-                                                !inOrder.direction && inOrder.clicked && inOrder.orderBy === header.inorder ? sortDown : dash
-                                            } alt="headerImage" />
-                                        </button>
-                                    </th>
-                                )
-                            })
-                        }
-                        <th>Website</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {
-                        appliedInternships.map((appliedInternship: internshipTypes) => {
-                            return (
-                                <tr onClick={() => setCompanyBox({  companyName: appliedInternship.company, url: appliedInternship.website_url, snippet: appliedInternship.web_snippet, show: true })} key={appliedInternship.id} style={{ backgroundColor: (appliedInternships.indexOf(appliedInternship)+1) % 2 === 0 ? '#D9D9D9': 'white' }} className="hover:brightness-95 cursor-pointer">
-                                    <td className="content">{appliedInternship.id}</td>
-                                    <td className="content">{appliedInternship.company}</td>
-                                    <td className="content">{appliedInternship.application_status}</td>
-                                    <td className="content">{new Date(appliedInternship.applied_date).toLocaleDateString('en-GB')}</td>
-                                    <td className="content">{appliedInternship.accepted_rejected_date !== null ? new Date(appliedInternship.accepted_rejected_date).toLocaleDateString('en-GB') : '-'}</td>
-                                    
-                                    <td className="border h-[2rem] relative">
-                                        <Link to={appliedInternship.website_url} target="_blank" className="h-full w-full top-0 flex justify-center items-center absolute">
-                                            <img src={link} alt="link" />
-                                        </Link>
-                                    </td>
-                                </tr>
-                            )
-                        })
-                    }
-                </tbody>
-            </table>
         </section>
     )
 }
